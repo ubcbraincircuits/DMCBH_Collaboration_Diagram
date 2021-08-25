@@ -1,0 +1,14 @@
+Sub get_yellow()
+'
+' get_yellow Macro
+'
+
+'
+    Range("C2:G108").Select
+    For Each Cell In Selection
+    If Cell.Interior.ColorIndex <> 6 Then
+    Cell.Clear
+    End If
+    Next
+    
+End Sub
