@@ -48,7 +48,7 @@ edge_l = edge_l[!duplicated(edge_l$temp), 1:2]
 # loading in the group names
 df_collab = read_xlsx("EDITED_Primary Category_for_each_PI.xlsx")
 
-#creating a group column by pivoting 
+# creating a group column by pivoting 
 df_group = df_collab %>%
   pivot_longer(c("Mental Health & Addictions",
                  "Brain Development & Neurodevelopmental Disorders",
@@ -93,20 +93,20 @@ df_group =  subset(df_group, select = c("name", "group", "number"))
 
 # removing any names from our group list not found in the collaboration list.
 all_edges = data.frame(stack(edge_l))
-nodes = semi_join(df_group,all_edges,by=c("name"="values"))
+nodes = semi_join(df_group, all_edges, by = c("name"="values"))
 
 # Removing any colaborations that involve names not found on the group list. 
-links=semi_join(edge_l,nodes,by=c("origin"="name"))
-links=semi_join(links,nodes,by=c("destination"="name"))
+links = semi_join(edge_l, nodes, by = c("origin"="name"))
+links = semi_join(links, nodes, by = c("destination"="name"))
 
 # cleaning up nodes
-nodes=data.frame(nodes)
+nodes = data.frame(nodes)
 
 # creating the groupings
-group = structure(nodes$group,names = nodes$name)
+group = structure(nodes$group, names = nodes$name)
 
 # creating colors for the groupings
-color = structure(nodes$number,names=nodes$name)
+color = structure(nodes$number, names = nodes$name)
 
 # create an adjacency list. 
 adjacencyData = data.frame(with(links, table(origin, destination)))
@@ -157,10 +157,3 @@ circos.trackPlotRegion(
       labels.niceFacing = FALSE)
   }
 )
-
-##### notes #####
-#Ok, so I like the colours but they can be easily removed. 
-
-# I need to create a guide for what I did to the original groups excel file 
-# to get it into a workable state. 
-#####
