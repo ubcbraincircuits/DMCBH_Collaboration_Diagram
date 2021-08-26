@@ -7,7 +7,7 @@ library(readxl)
 
 # Define the names of the collaboration survey data and the Primary Category/group data
 collab_excel_file = "DMCBH Members Survey 2020_as of August 12, 2021.xlsx"
-group_excel_file = "EDITED_Primary Category_for_each_PI.xlsx"
+group_excel_file = "EDITED_Primary_Category_for_each_PI.xlsx"
 
 # load in collaboration survey data
 df = read_xlsx(collab_excel_file)
