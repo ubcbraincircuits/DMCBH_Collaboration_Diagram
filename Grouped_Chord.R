@@ -21,7 +21,7 @@ df_collab = subset(df, select = c(first_name, last_name, collab))
 
 # remove the uneccesary first row and get rid of rows containing NAs
 df_collab = df_collab[-c(1),]
-df_collab = na.omit(df_collab)
+df_collab=df_collab[rowSums(is.na(df_collab)) != ncol(df_collab), ]
 
 ##### create an edge list using for loop. ####
 origin = c()
@@ -31,10 +31,12 @@ for (i in 1:nrow(df_collab)) {
   x = df_collab$last_name[i]
   y = df_collab$first_name[i]
   for (n in 1:nrow(df_collab)) {
-    if(str_detect(df_collab$collab[n], x) == TRUE) {
-      origin = append(origin, paste(paste(substr(df_collab$first_name[n], 1, 1),
-                                          ".", sep = ""), df_collab$last_name[n]))
-      destination = append(destination, paste(paste(substr(y, 1, 1), ".", sep = ""), x)) 
+    if(is.na(df_collab$collab[n]) == FALSE) {
+      if(str_detect(df_collab$collab[n], x) == TRUE) {
+        origin = append(origin, paste(paste(substr(df_collab$first_name[n], 1, 1),
+                                            ".", sep = ""), df_collab$last_name[n]))
+        destination = append(destination, paste(paste(substr(y, 1, 1), ".", sep = ""), x)) 
+      }
     }
   }
 }
