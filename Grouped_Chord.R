@@ -5,8 +5,12 @@ library(patchwork)
 library(circlize)
 library(readxl)
 
+# Define the names of the collaboration survey data and the Primary Category/group data
+collab_excel_file = "DMCBH Members Survey 2020_as of August 12, 2021.xlsx"
+group_excel_file = "EDITED_Primary Category_for_each_PI.xlsx"
+
 # load in collaboration survey data
-df = read_xlsx("DMCBH Members Survey 2020_as of August 12, 2021.xlsx")
+df = read_xlsx(collab_excel_file)
 
 # alter dataset to only include the first and last names of the survey subjects
 # along with any collaborators.
@@ -46,7 +50,7 @@ edge_l = edge_l[!duplicated(edge_l$temp), 1:2]
 
 ##### download and set up the group names #####
 # loading in the group names
-df_collab = read_xlsx("EDITED_Primary Category_for_each_PI.xlsx")
+df_collab = read_xlsx(group_excel_file)
 
 # creating a group column by pivoting 
 df_group = df_collab %>%
