@@ -52,10 +52,10 @@ edge_l = edge_l[!duplicated(edge_l$temp), 1:2]
 
 ##### download and set up the group names #####
 # loading in the group names
-df_collab = read_xlsx(group_excel_file)
+df_group = read_xlsx(group_excel_file)
 
 # creating a group column by pivoting 
-df_group = df_collab %>%
+df_group = df_group %>%
   pivot_longer(c("Mental Health & Addictions",
                  "Brain Development & Neurodevelopmental Disorders",
                  "Learning/ Memory & Dementias",
