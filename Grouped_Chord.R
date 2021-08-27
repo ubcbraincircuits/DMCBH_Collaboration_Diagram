@@ -12,11 +12,15 @@ group_excel_file = "EDITED_Primary_Category_for_each_PI.xlsx"
 # load in collaboration survey data
 df = read_xlsx(collab_excel_file)
 
-# alter dataset to only include the first and last names of the survey subjects
-# along with any collaborators.
-df$first_name = df$Q36_1
-df$last_name = df$Q36_2
-df$collab = str_c(df$Q4, df$Q7_2, sep = " ")
+# renaming the columns that include the first and last names of participants for simplicity
+df = rename(df, first_name = Q36_1, last_name = Q36_2)
+
+# Renaming the column that contains the collaborators. 
+# This line of code must be altered depending on if you want to see the publications or 
+# the active collaborators by using Q4 for publications and Q7_2 for active collaborations
+df = rename(df, collab = Q4)
+
+# creating a subset of our survey data that extracts the useful columns. 
 df_collab = subset(df, select = c(first_name, last_name, collab))
 
 # remove the uneccesary first row and get rid of rows containing NAs
@@ -150,7 +154,7 @@ circos.trackPlotRegion(
       labels = sector.index, 
       facing = "clockwise", 
       niceFacing = TRUE,
-      cex = 0.8
+      cex = 0.8,
     )
     
      #Add graduation on axis
