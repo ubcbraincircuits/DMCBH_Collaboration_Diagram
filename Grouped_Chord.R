@@ -65,6 +65,13 @@ edge_l$temp = apply(edge_l, 1, function(x) paste(sort(x), collapse=""))
 
 edge_l = edge_l[!duplicated(edge_l$temp), 1:2]
 
+# cleaning up the edge list by removing self connections. 
+for (i in 1:nrow(edge_l)) {
+  if (identical(edge_l$origin[i],edge_l$destination[i]) == TRUE) {
+    edge_l = edge_l[-i,]
+  }
+}
+
 ##### download and set up the group names #####
 # loading in the group names
 df_group = read_xlsx(group_excel_file)
