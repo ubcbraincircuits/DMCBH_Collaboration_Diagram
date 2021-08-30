@@ -5,9 +5,20 @@ library(patchwork)
 library(circlize)
 library(readxl)
 
+##### Set up #####
+
 # Define the names of the collaboration survey data and the Primary Category/group data
 collab_excel_file = "DMCBH Members Survey 2020_as of August 12, 2021.xlsx"
 group_excel_file = "EDITED_Primary_Category_for_each_PI.xlsx"
+
+# Define the title, Primary categroy names, and the colour pallete you want to use 
+title = "Active Collaborators"
+Primary_c = c("Mental Health & Addictions",
+              "Brain Development & Neurodevelopmental Disorders",
+              "Learning/ Memory & Dementias",
+              "Sensory/ Motor Systems & Movement Disorders",
+              "Brain Injury & Repair")
+c_pallete = c("red","green","blue","cyan","magenta")
 
 # load in collaboration survey data
 df = read_xlsx(collab_excel_file)
@@ -18,7 +29,7 @@ df = rename(df, first_name = Q36_1, last_name = Q36_2)
 # Renaming the column that contains the collaborators. 
 # This line of code must be altered depending on if you want to see the publications or 
 # the active collaborators by using Q4 for publications and Q7_2 for active collaborations
-df = rename(df, collab = Q4)
+df = rename(df, collab = Q7_2)
 
 # creating a subset of our survey data that extracts the useful columns. 
 df_collab = subset(df, select = c(first_name, last_name, collab))
@@ -60,46 +71,32 @@ df_group = read_xlsx(group_excel_file)
 
 # creating a group column by pivoting 
 df_group = df_group %>%
-  pivot_longer(c("Mental Health & Addictions",
-                 "Brain Development & Neurodevelopmental Disorders",
-                 "Learning/ Memory & Dementias",
-                 "Sensory/ Motor Systems & Movement Disorders",
-                 "Brain Injury & Repair"),
+  pivot_longer(Primary_c,
                names_to = "group",
                values_to = "junk")
 
 df_group = na.omit(df_group)
 
-# numbering the groups to help with colouration later
-number =  c()
+# Assigning a colour to each group. 
+color =  c()
 
 for (i in 1:nrow(df_group)) {
-  if(df_group$group[i] == "Mental Health & Addictions") {
-    number = append(number,2)
-  }
-  if(df_group$group[i] == "Brain Development & Neurodevelopmental Disorders") {
-    number = append(number,3)
-  }
-  if(df_group$group[i] == "Learning/ Memory & Dementias") {
-    number = append(number,4)
-  }
-  if(df_group$group[i] == "Sensory/ Motor Systems & Movement Disorders") {
-    number = append(number,5)
-  }
-  if(df_group$group[i] == "Brain Injury & Repair") {
-    number = append(number,6)
+  for (j in 1:length(Primary_c)) {
+    if(df_group$group[i] == Primary_c[j]) {
+      color = append(color,c_pallete[j])
+    }
   }
 }
 
-# adding the color number to the dataframe.
-df_group$number = number
+# adding the color column to the dataframe.
+df_group$color = color
 
 ##### Integrating the grouping data into the collaboration data #####
 
 # Making the naming of the groups dataframe the same the naming 
 #of the collaboration dataframe
 df_group$name = paste(substr(df_group$`First Name`, 1, 1), df_group$`Last Name`, sep=". ")
-df_group =  subset(df_group, select = c("name", "group", "number"))
+df_group =  subset(df_group, select = c("name", "group", "color"))
 
 # removing any names from our group list not found in the collaboration list.
 all_edges = data.frame(stack(edge_l))
@@ -113,25 +110,25 @@ links = semi_join(links, nodes, by = c("destination"="name"))
 nodes = data.frame(nodes)
 
 # creating the groupings
-group = structure(nodes$group, names = nodes$name)
+group_ind = structure(nodes$group, names = nodes$name)
 
 # creating colors for the groupings
-color = structure(nodes$number, names = nodes$name)
+color_ind = structure(nodes$color, names = nodes$name)
 
 # create an adjacency list. 
 adjacencyData = data.frame(with(links, table(origin, destination)))
 
 ##### creating the chord diagram #####
 
-# parameters
+# set up the parameters
 circos.clear()
 circos.par(start.degree = 90, gap.degree = 4, track.margin = c(-0.1, 0.1), 
            points.overflow.warning = FALSE, canvas.xlim = c(-1.3,1.3),
            canvas.ylim = c(-1.3,1.3))
-par(mar = rep(0, 4))
+par(mar = c(0,0,2,0),xpd = TRUE, cex.main = 1.5)
 
-# alright, now I just need the grid colors and some of the other wording changes.
-chordDiagram(adjacencyData, group = group, grid.col = color,
+# create the chord diagram
+chordDiagram(adjacencyData, group = group_ind, grid.col = color_ind,
              transparency = 0.25,
              diffHeight  = -0.04,
              annotationTrack = "grid", 
@@ -139,6 +136,7 @@ chordDiagram(adjacencyData, group = group, grid.col = color,
              link.sort = TRUE, 
              link.largest.ontop = FALSE)
 
+# Add the text and the axis surrounding the diagram.
 circos.trackPlotRegion(
   track.index = 1, 
   bg.border = NA, 
@@ -160,10 +158,12 @@ circos.trackPlotRegion(
      #Add graduation on axis
     circos.axis(
       h = "top", 
-      #major.at = seq(from = 0, to = xlim[2], by = ifelse(test = xlim[2]>10, yes = 2, no = 1)),
       labels.cex = 0.001,
       minor.ticks = 2, 
       major.tick.length = 0.1, 
       labels.niceFacing = FALSE)
   }
 )
+
+# Add a title
+title(title,outer=FALSE)

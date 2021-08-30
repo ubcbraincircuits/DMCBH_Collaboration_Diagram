@@ -5,7 +5,7 @@ This repository includes code and directions for creating a chord diagram that v
 `Grouped_Chord_R`: This R script creates a chord diagram that separates each researcher into their primary area of study and then shows the collaborations between researchers. This script is designed to receive two different excel data tables as input. The first is a table that shows the collaboration between PIs and the second is a table that shows which primary category/group each PI falls under.
 The collaboration table must have the same format as the `DMCBH Members Survey 2020_as of August 12, 2021` data file provided in this repository or the code will need to be manually altered. 
 The primary category/group data must have the same format as the `EDITED_Primary_Category_for_each_PI` data file provided in this repository or the code will need to be manually altered. 
-**NOTE** Line 21 of the code must be altered in order to switch from creating a chord graph of PIs active collaborations to a chord graph of the PIs publications. details of the alteration are explained in comments above the code. 
+**NOTE:** Line 32 of the code must be altered in order to switch from creating a chord graph of PIs active collaborations to a chord graph of the PIs publications. details of the alteration are explained in comments above the code. 
 
 `DMCBH Members Survey 2020_as of August 12, 2021.xlxs`: A data table created as part of a survey given out to DMCBH members in Summer 2021. This table has been minimally edited as described in the "Altering data files" section of the ReadMe. 
 
